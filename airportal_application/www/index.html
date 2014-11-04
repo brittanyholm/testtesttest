@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+    
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" / >
+        <title>Title</title>
+        
+        <link href="css/reset.css" rel="stylesheet" type="text/css" />
+        <link href="css/styles.css" rel="stylesheet" type="text/css" />
+        
+        <script src="js/jquery-1.8.2.min.js"></script>
+        <script type="text/javascript" src="js/jquery.mobile.custom.min.js"></script>
+        
+        <script type="text/javascript" src="phonegap.js"></script>
+    
+    </head>
+    
+    <body>
+    
+        <canvas id="myCanvas"></canvas>
+            
+            <div id="myButtonHolder">
+            	<a id="myButton" href="#"></a>
+            </div>
+            
+        </section>
+        
+        <script>
+			var canvas;
+			var ctx;
+			
+			var imageObject = new Image();
+		
+			$(document).ready(function() {
+				
+				alert("Document ready!");
+				document.addEventListener('deviceready', onDeviceReady, false);
+
+				canvas = document.getElementById('myCanvas');
+				canvas.width  = 960;
+				canvas.height = 480;
+				
+				ctx = canvas.getContext('2d');
+				
+				imageObject.src = "images/myImage.jpg";
+				
+        	});	
+			
+			function onDeviceReady() {
+			  	navigator.notification.alert(
+					'Cordova is ready!'
+			   	);
+			}
+		
+			$('#myButton').on('tap', function(event){
+				alert("My button tapped!");
+				useExistingPhoto(event);
+				event.preventDefault();
+			});
+			
+			// use an existing photo from the library:
+			function useExistingPhoto(e) {
+				alert("useExistingPhoto function called!");
+			  	capture(Camera.PictureSourceType.SAVEDPHOTOALBUM);
+			};
+			
+			/*
+			// take a new photo:
+			function takePhoto(e) {
+			  capture(Camera.PictureSourceType.CAMERA);
+			};
+			*/
+			
+			// capture either new or existing photo:
+			function capture(sourceType) {
+				alert("capture function called!");
+			  	navigator.camera.getPicture(onCaptureSuccess, onCaptureFail, {
+				destinationType: Camera.DestinationType.FILE_URI,
+				sourceType: sourceType,
+				correctOrientation: true
+			  });
+			};
+			
+			// if photo is captured successfully, then upload to server:
+			function onCaptureSuccess(imageURI) {
+				alert("onCaptureSuccess function called!");
+				alert("The path to the selected image is: " + imageURI);
+				
+				imageObject.src = imageURI;
+				
+				/*
+			  var fail, ft, options, params, win;
+			  // callback for when the photo has been successfully uploaded:
+			  success: function(response) {
+				alert("Your photo has been uploaded!");
+			  };
+			  
+			  // callback if the photo fails to upload successfully.
+			  fail: function(error) {
+				alert("An error has occurred: Code = " + error.code);
+			  };
+			  
+			  options = new FileUploadOptions();
+			  // parameter name of file:
+			  options.fileKey = "my_image";
+			  // name of the file:
+			  options.fileName = imageURI.substr(imageURI.lastIndexOf('/') + 1);
+			  // mime type:
+			  options.mimeType = "text/plain";
+			  params = {
+				val1: "some value",
+				val2: "some other value"
+			  };
+			  
+			  options.params = params;
+			  ft = new FileTransfer();
+			  ft.upload(imageURI, 'http://example.com/path/to/service', success, fail, options);
+			  */
+			};
+			
+			imageObject.onload = function() {
+				ctx.drawImage(imageObject, 0, 0);
+			};
+			
+			// there was an error capturing the photo:
+			function onCaptureFail(message) {
+			  alert("Failed because: " + message);
+			};
+			
+		</script>
+
+    </body>
+
+</html>
